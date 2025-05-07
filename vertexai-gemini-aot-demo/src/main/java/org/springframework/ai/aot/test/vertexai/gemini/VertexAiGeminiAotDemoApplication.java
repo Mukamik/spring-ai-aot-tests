@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import reactor.core.publisher.Flux;
 
 import org.springframework.ai.chat.ChatResponse;
-import org.springframework.ai.chat.messages.MediaData;
+import org.springframework.ai.chat.messages.Media;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -59,9 +59,9 @@ public class VertexAiGeminiAotDemoApplication {
             // Multi-modal query. NOTE: switch the model to "gemini-pro-vision"!
             byte[] data = new ClassPathResource("/vertex.test.png").getContentAsByteArray();
             var multiModalUserMessage = new UserMessage("Explain what do you see o this picture?",
-                    List.of(new MediaData(MimeTypeUtils.IMAGE_PNG, data)));
+                    List.of(new Media(MimeTypeUtils.IMAGE_PNG, data)));
             ChatResponse multiModalResponse = chatClient.call(new Prompt(List.of(multiModalUserMessage),
-                    VertexAiGeminiChatOptions.builder().withModel("gemini-pro-vision").build()));
+                    VertexAiGeminiChatOptions.builder().withModel("gemini-2.0-flash").build()));
             System.out.println("MULTI-MODAL RESPONSE: " + multiModalResponse.getResult().getOutput().getContent());
 
             // Function calling
@@ -119,6 +119,7 @@ public class VertexAiGeminiAotDemoApplication {
             var mcs = MemberCategory.values();
             hints.reflection().registerType(MockWeatherService.Request.class, mcs);
             hints.reflection().registerType(MockWeatherService.Response.class, mcs);
+            hints.resources().registerPattern("vertex.test.png");
         }
 
     }
